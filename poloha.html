@@ -27,7 +27,7 @@
     function colorForLine(lineId, vtype, isInactive) {
         const id = Number(lineId) || 0;
         const vt = Number(vtype);
-        if (vt == 5) return '#c66b4b';
+        if (vt === 5) return '#c66b4b';
         if (isInactive) return '#ffffff';
         if (id >= 1 && id <= 20) return '#d32d2a';       // červená
         if (id >= 21 && id <= 39) return '#4ca14c';      // zelená
@@ -101,41 +101,6 @@
         processRecord(rec);
     }
 
-    const StopsCache = (function () {
-        let mapCsv = null;
-        let loadPromise = null;
-
-        async function load(csvUrl) {
-            if (mapCsv) return mapCsv;
-            if (loadPromise) return loadPromise;
-
-            loadPromise = (async () => {
-                const resp = await fetch(csvUrl);
-                if (!resp.ok) throw new Error('Nešlo načíst CSV: ' + resp.status);
-                const text = await resp.text();
-                const m = new MapCsv();
-                for (const line of text.split(/\r?\n/)) {
-                    if (!line.trim()) continue;
-                    const cols = line.split(';'); // použito středník
-                    if (cols.length >= 2) m.set(cols[0].trim(), cols[1].trim());
-                }
-                mapCsv = m;
-                loadPromise = null;
-                return mapCsv;
-            })();
-
-            return loadPromise;
-        }
-
-        async function getFinalStop(finalStopID, csvUrl = 'stops.csv') {
-            const m = await load(csvUrl);
-            return m.has(String(finalStopID)) ? m.get(String(finalStopID)) : null;
-        }
-
-        return { getFinalStop };
-    })();
-
-
     function processRecord(record) {
         if (!record || typeof record.ID === 'undefined') return;
         const id = String(record.ID);
@@ -151,13 +116,7 @@
         const lineId = record.LineID;
         const lineName = record.LineName;
         const vtype = record.VType;
-        StopsCache.getFinalStop(record.FinalStopID)
-            .then(finalStop => {
-                const popup = `Linka: ${record.LineName || lineId || ''} ( ${record.Course} )<br>Do: ${finalStop} <br>Zpoždění: ${record.Delay} min.`;
-                // použij popup zde (např. showPopup(popup))
-            })
-            .catch(err => console.error(err));
-        //const popup = `Linka: ${record.LineName || lineId || ''} ( ${record.Course} )<br>Do: ${finalStop} <br>Zpoždění: ${record.Delay} min.`;
+        const popup = `Linka: ${record.LineName || lineId || ''} ( ${record.Course} )<br>Do: ${finalStop} <br>Zpoždění: ${record.Delay} min.`;
 
         if (vehicles.has(id)) {
             const marker = vehicles.get(id);
