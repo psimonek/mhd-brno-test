@@ -102,26 +102,26 @@
     }
 
     const StopsCache = (function () {
-        let map = null;
+        let mapCsv = null;
         let loadPromise = null;
 
         async function load(csvUrl) {
-            if (map) return map;
+            if (mapCsv) return mapCsv;
             if (loadPromise) return loadPromise;
 
             loadPromise = (async () => {
                 const resp = await fetch(csvUrl);
                 if (!resp.ok) throw new Error('Nešlo načíst CSV: ' + resp.status);
                 const text = await resp.text();
-                const m = new Map();
+                const m = new MapCsv();
                 for (const line of text.split(/\r?\n/)) {
                     if (!line.trim()) continue;
                     const cols = line.split(';'); // použito středník
                     if (cols.length >= 2) m.set(cols[0].trim(), cols[1].trim());
                 }
-                map = m;
+                mapCsv = m;
                 loadPromise = null;
-                return map;
+                return mapCsv;
             })();
 
             return loadPromise;
