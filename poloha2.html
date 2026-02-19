@@ -15,6 +15,29 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
+    const map = L.map('map').setView([49.1951, 16.6068], 12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OSM' }).addTo(map);
+
+
+
+
+    loadStopsCsv();
+
+
+
+
+    let ws = null;
+    let tracking = false;
+    const vehicles = new Map();
+    const STREAM_URL = 'wss://gis.brno.cz/geoevent/ws/services/stream_kordis_26/StreamServer/subscribe';
+
+
+
+
+
+
+
+
 
 
 
@@ -48,19 +71,17 @@
 
 
 
-    loadStopsCsv();
 
 
 
 
 
-    const map = L.map('map').setView([49.1951, 16.6068], 12);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OSM' }).addTo(map);
 
-    let ws = null;
-    let tracking = false;
-    const vehicles = new Map();
-    const STREAM_URL = 'wss://gis.brno.cz/geoevent/ws/services/stream_kordis_26/StreamServer/subscribe';
+
+
+
+
+
 
     // Barva podle LineID
     function colorForLine(lineId, vtype, isInactive) {
