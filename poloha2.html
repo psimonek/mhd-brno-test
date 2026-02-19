@@ -15,6 +15,45 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
+
+
+
+
+    const stopsMap = new Map(); // id -> název
+
+    // Načte stops.csv z totéhož adresáře a naplní stopsMap.
+    // Očekává CSV se dvěma sloupci: id,nazev (první řádek není header; toleruje header i bez něj)
+    async function loadStopsCsv(url = 'stops.csv') {
+        try {
+            const res = await fetch(url);
+            if (!res.ok) throw new Error('Failed to fetch stops.csv');
+            const txt = await res.text();
+            const lines = txt.split(/\r?\n/);
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+                // jednoduché CSV split na první čárku (pokud název může obsahovat čárky, upravte parser)
+                const idx = line.indexOf(',');
+                if (idx === -1) continue;
+                const id = line.slice(0, idx).trim();
+                const name = line.slice(idx + 1).trim();
+                if (!id) continue;
+                stopsMap.set(id, name);
+            }
+            console.log('Loaded stops:', stopsMap.size);
+        } catch (e) {
+            console.warn('Could not load stops.csv:', e);
+        }
+    }
+
+
+
+    loadStopsCsv();
+
+
+
+
+
     const map = L.map('map').setView([49.1951, 16.6068], 12);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OSM' }).addTo(map);
 
@@ -116,7 +155,24 @@
         const lineId = record.LineID;
         const lineName = record.LineName;
         const vtype = record.VType;
-        const popup = `Linka: ${record.LineName || lineId || ''} ( ${record.Course} )<br>Do: ${record.FinalStopID} <br>Zpoždění: ${record.Delay} min.`;
+
+
+
+
+
+        const rawFinalStop = record.FinalStopID != null ? String(record.FinalStopID) : '';
+        const finalStopName = stopsMap.get(rawFinalStop) || rawFinalStop || '';
+        const popup = `Linka: ${record.LineName || lineId || ''} ( ${record.Course} )<br>Do: ${finalStopName} <br>Zpoždění: ${record.Delay} min.`;
+
+
+
+
+
+
+
+
+
+        //const popup = `Linka: ${record.LineName || lineId || ''} ( ${record.Course} )<br>Do: ${record.FinalStopID} <br>Zpoždění: ${record.Delay} min.`;
 
         if (vehicles.has(id)) {
             const marker = vehicles.get(id);
