@@ -1,7 +1,7 @@
 loadStopsCsv();
 
 let ws = null;
-let tracking = false;
+let trackingButton = false;
 const vehicles = new Map();
 const STREAM_URL = 'wss://gis.brno.cz/geoevent/ws/services/stream_kordis_26/StreamServer/subscribe';
 
@@ -189,16 +189,16 @@ const startBtn = document.getElementById('startBtn');
 const stopBtn = document.getElementById('stopBtn');
 
 startBtn.addEventListener('click', () => {
-    if (tracking) return;
-    tracking = true;
+    if (trackingButton) return;
+    trackingButton = true;
     startBtn.disabled = true;
     stopBtn.disabled = false;
     startWebsocket();
 });
 
 stopBtn.addEventListener('click', () => {
-    if (!tracking) return;
-    tracking = false;
+    if (!trackingButton) return;
+    trackingButton = false;
     startBtn.disabled = false;
     stopBtn.disabled = true;
     stopWebsocket();
