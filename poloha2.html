@@ -18,13 +18,7 @@
     const map = L.map('map').setView([49.1951, 16.6068], 12);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OSM' }).addTo(map);
 
-
-
-
     loadStopsCsv();
-
-
-
 
     let ws = null;
     let tracking = false;
