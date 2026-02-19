@@ -33,7 +33,7 @@
                 const line = lines[i].trim();
                 if (!line) continue;
                 // jednoduché CSV split na první čárku (pokud název může obsahovat čárky, upravte parser)
-                const idx = line.indexOf(',');
+                const idx = line.indexOf(';');
                 if (idx === -1) continue;
                 const id = line.slice(0, idx).trim();
                 const name = line.slice(idx + 1).trim();
