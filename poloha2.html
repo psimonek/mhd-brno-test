@@ -42,39 +42,36 @@
 
 
 
-    const stopsMap = new Map(); // id -> název
 
-    // Načte stops.csv z totéhož adresáře a naplní stopsMap.
-    // Očekává CSV se dvěma sloupci: id,nazev (první řádek není header; toleruje header i bez něj)
+    const stopsMap = new Map(); // normalizedId (číslo jako string) -> název
+
+    // Načte stops.csv a uloží mapu s klíči normalizovanými tak, že z hodnot
+    // jako "U1234Z1" získá "1234".
     async function loadStopsCsv(url = 'stops.csv') {
         try {
             const res = await fetch(url);
             if (!res.ok) throw new Error('Failed to fetch stops.csv: ' + res.status);
             const txt = await res.text();
             const lines = txt.split(/\r?\n/);
-            let parsedCount = 0;
             for (let i = 0; i < lines.length; i++) {
-                const rawLine = lines[i];
-                const line = rawLine.trim();
-                if (!line) continue;
-                const parts = line.split(';');
+                const rawLine = lines[i].trim();
+                if (!rawLine) continue;
+                const parts = rawLine.split(';');
                 if (parts.length < 2) continue;
-                const id = parts[0].trim().replace(/^"|"$/g, '');
+                let rawId = parts[0].trim().replace(/^"|"$/g, '');
                 const name = parts.slice(1).join(';').trim().replace(/^"|"$/g, '');
-                if (!id) continue;
-                stopsMap.set(id, name);
-                parsedCount++;
+                // Normalizace: najdeme první číslicovou posloupnost v rawId
+                const m = rawId.match(/\d+/);
+                if (!m) continue;
+                const normalized = m[0]; // např. "1234"
+                stopsMap.set(normalized, name);
             }
-            console.log(`stops.csv loaded — total lines: ${lines.length}, parsed: ${parsedCount}, map size: ${stopsMap.size}`);
-            // vypiš prvních 10 a posledních 10 z raw souboru pro rychlou kontrolu
-            const first = lines.slice(0, 10).map((l,i)=>`${i+1}: ${l}`).join('\n');
-            const last = lines.slice(-10).map((l,i)=>`${lines.length-10+i+1}: ${l}`).join('\n');
-            console.log('stops.csv first 10 lines:\n' + first);
-            console.log('stops.csv last 10 lines:\n' + last);
         } catch (e) {
-            console.warn('Could not load stops.csv:', e);
+            // ticho — nezapisovat do konzole podle požadavku
         }
     }
+
+
 
 
 
@@ -192,16 +189,11 @@
 
 
 
-        // těsně před sestavením popupu
         const rawFinalStop = record.FinalStopID != null ? String(record.FinalStopID).trim() : '';
-        if (!stopsMap.has(rawFinalStop)) {
-            console.warn('Stop lookup failed for id:', JSON.stringify(rawFinalStop),
-                'map size:', stopsMap.size,
-                // ukážeme až 5 alternativních klíčů z mapy které začínají podobně (pomůže odhalit whitespace/znaky)
-                'similar keys:', Array.from(stopsMap.keys()).slice(0,5).filter(k=>k.includes(rawFinalStop.slice(0,3))).slice(0,5)
-            );
-        }
-        const finalStopName = stopsMap.get(rawFinalStop) || rawFinalStop || '';
+// rawFinalStop očekáváme už jako číslo nebo řetězec číslic, ale normalizujeme stejně
+        const m = rawFinalStop.match(/\d+/);
+        const lookupKey = m ? m[0] : rawFinalStop;
+        const finalStopName = stopsMap.get(lookupKey) || rawFinalStop || '';
         const popup = `Linka: ${record.LineName || lineId || ''} ( ${record.Course} )<br>Do: ${finalStopName} <br>Zpoždění: ${record.Delay} min.`;
 
 
