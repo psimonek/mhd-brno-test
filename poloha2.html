@@ -51,34 +51,31 @@
             const res = await fetch(url);
             if (!res.ok) throw new Error('Failed to fetch stops.csv: ' + res.status);
             const txt = await res.text();
-            console.log('stops.csv raw content (first 1000 chars):\n', txt.slice(0,1000));
             const lines = txt.split(/\r?\n/);
-            console.log('stops.csv total lines:', lines.length);
+            let parsedCount = 0;
             for (let i = 0; i < lines.length; i++) {
                 const rawLine = lines[i];
                 const line = rawLine.trim();
                 if (!line) continue;
                 const parts = line.split(';');
-                if (parts.length < 2) {
-                    console.warn('Line has <2 parts, skipping:', i+1, rawLine);
-                    continue;
-                }
+                if (parts.length < 2) continue;
                 const id = parts[0].trim().replace(/^"|"$/g, '');
                 const name = parts.slice(1).join(';').trim().replace(/^"|"$/g, '');
-                console.log('Parsed line', i+1, '-> id:', JSON.stringify(id), 'name:', JSON.stringify(name));
                 if (!id) continue;
                 stopsMap.set(id, name);
+                parsedCount++;
             }
-            console.log('Loaded stopsMap size:', stopsMap.size);
-            let count = 0;
-            for (const [k,v] of stopsMap) {
-                console.log('stopsMap entry:', k, '=>', v);
-                if (++count >= 20) break;
-            }
+            console.log(`stops.csv loaded — total lines: ${lines.length}, parsed: ${parsedCount}, map size: ${stopsMap.size}`);
+            // vypiš prvních 10 a posledních 10 z raw souboru pro rychlou kontrolu
+            const first = lines.slice(0, 10).map((l,i)=>`${i+1}: ${l}`).join('\n');
+            const last = lines.slice(-10).map((l,i)=>`${lines.length-10+i+1}: ${l}`).join('\n');
+            console.log('stops.csv first 10 lines:\n' + first);
+            console.log('stops.csv last 10 lines:\n' + last);
         } catch (e) {
             console.warn('Could not load stops.csv:', e);
         }
     }
+
 
 
 
@@ -193,8 +190,17 @@
 
 
 
+
+
+        // těsně před sestavením popupu
         const rawFinalStop = record.FinalStopID != null ? String(record.FinalStopID).trim() : '';
-        console.log('record.FinalStopID:', JSON.stringify(record.FinalStopID), 'as string:', JSON.stringify(rawFinalStop), 'stopsMap.has:', stopsMap.has(rawFinalStop));
+        if (!stopsMap.has(rawFinalStop)) {
+            console.warn('Stop lookup failed for id:', JSON.stringify(rawFinalStop),
+                'map size:', stopsMap.size,
+                // ukážeme až 5 alternativních klíčů z mapy které začínají podobně (pomůže odhalit whitespace/znaky)
+                'similar keys:', Array.from(stopsMap.keys()).slice(0,5).filter(k=>k.includes(rawFinalStop.slice(0,3))).slice(0,5)
+            );
+        }
         const finalStopName = stopsMap.get(rawFinalStop) || rawFinalStop || '';
         const popup = `Linka: ${record.LineName || lineId || ''} ( ${record.Course} )<br>Do: ${finalStopName} <br>Zpoždění: ${record.Delay} min.`;
 
