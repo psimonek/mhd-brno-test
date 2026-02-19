@@ -159,7 +159,7 @@
         const lookupKey = m ? m[0] : rawFinalStop;
         const finalStopName = stopsMap.get(lookupKey) || rawFinalStop || '';
 
-        const popup = `Linka: ${record.LineName || lineId || ''}, kurz: ${record.Course}<br>Do: ${finalStopName} <br>Zpoždění: ${record.Delay} min.`;
+        const popup = `Linka: ${record.LineName || lineId || ''}, kurz:  ${record.Course}<br>Do: ${finalStopName} <br>Zpoždění: ${record.Delay} min.`;
 
         if (vehicles.has(id)) {
             const marker = vehicles.get(id);
