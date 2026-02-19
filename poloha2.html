@@ -31,18 +31,6 @@
     const vehicles = new Map();
     const STREAM_URL = 'wss://gis.brno.cz/geoevent/ws/services/stream_kordis_26/StreamServer/subscribe';
 
-
-
-
-
-
-
-
-
-
-
-
-
     const stopsMap = new Map(); // normalizedId (číslo jako string) -> název
 
     // Načte stops.csv a uloží mapu s klíči normalizovanými tak, že z hodnot
@@ -70,24 +58,6 @@
             // ticho — nezapisovat do konzole podle požadavku
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     // Barva podle LineID
     function colorForLine(lineId, vtype, isInactive) {
@@ -183,28 +153,13 @@
         const lineName = record.LineName;
         const vtype = record.VType;
 
-
-
-
-
-
-
         const rawFinalStop = record.FinalStopID != null ? String(record.FinalStopID).trim() : '';
-// rawFinalStop očekáváme už jako číslo nebo řetězec číslic, ale normalizujeme stejně
+        // rawFinalStop očekáváme už jako číslo nebo řetězec číslic, ale normalizujeme stejně
         const m = rawFinalStop.match(/\d+/);
         const lookupKey = m ? m[0] : rawFinalStop;
         const finalStopName = stopsMap.get(lookupKey) || rawFinalStop || '';
-        const popup = `Linka: ${record.LineName || lineId || ''} ( ${record.Course} )<br>Do: ${finalStopName} <br>Zpoždění: ${record.Delay} min.`;
 
-
-
-
-
-
-
-
-
-        //const popup = `Linka: ${record.LineName || lineId || ''} ( ${record.Course} )<br>Do: ${record.FinalStopID} <br>Zpoždění: ${record.Delay} min.`;
+        const popup = `Linka: ${record.LineName || lineId || ''}, kurz: ${record.Course}<br>Do: ${finalStopName} <br>Zpoždění: ${record.Delay} min.`;
 
         if (vehicles.has(id)) {
             const marker = vehicles.get(id);
