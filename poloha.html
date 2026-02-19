@@ -127,7 +127,7 @@
             return loadPromise;
         }
 
-        async function getFinalStop(finalStopID, csvUrl = '/stops.csv') {
+        async function getFinalStop(finalStopID, csvUrl = 'stops.csv') {
             const m = await load(csvUrl);
             return m.has(String(finalStopID)) ? m.get(String(finalStopID)) : null;
         }
