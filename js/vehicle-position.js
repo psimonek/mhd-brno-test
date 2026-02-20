@@ -78,7 +78,7 @@ function createCircleHtml(bearing=0, size=36, fillColor='#1978c8', lineText='') 
                 fill="${fillColor}" stroke="#ffffff" stroke-width="1.5" />
       </svg>
     `;
-    const textHtml = lineText ? `<div style="position:absolute;left:0;top:50%;width:${size}px;margin-top:-0.5em;text-align:center;font-weight:800;color:#ffffff;font-size:${Math.floor(size/3.4)}px;text-shadow:0 0 2px rgba(0,0,0,0.5);pointer-events:none;">${lineText}</div>` : '';
+    const textHtml = lineText ? `<div style="position:absolute;left:0;top:50%;width:${size}px;margin-top:-0.6em;text-align:center;font-weight:800;color:#ffffff;font-size:${Math.floor(size/3.2)}px;text-shadow:0 0 2px rgba(0,0,0,0.5);pointer-events:none;">${lineText}</div>` : '';
     const wrapper = `
       <div style="position:relative; width:${size}px; height:${size}px; display:inline-block; transform: rotate(${bearing}deg);">
         ${svg}
@@ -177,7 +177,11 @@ function processRecord(record) {
         updateMarkerIcon(marker, bearing, lineId, lineName, isInactive, vtype);
         if (marker.getPopup()) marker.setPopupContent(popup);
     } else {
-        const icon = createTriangleIcon(bearing, 36, colorForLine(lineId, vtype, isInactive), lineName !== undefined ? String(lineName) : '');
+        if (!isInactive) {
+            const icon = createTriangleIcon(bearing, 36, colorForLine(lineId, vtype, isInactive), lineName !== undefined ? String(lineName) : '');
+        } else {
+            const icon = createCircleIcon(bearing, 36, colorForLine(lineId, vtype, isInactive), lineName !== undefined ? String(lineName) : '');
+        }
         const marker = L.marker([lat, lng], {icon});
         marker.bindPopup(popup);
         marker.addTo(map);
