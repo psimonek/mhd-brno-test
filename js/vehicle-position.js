@@ -148,7 +148,6 @@ function processEnvelope(envelope) {
 }
 
 function processRecord(record) {
-    _hideAndRemoveWsOverlay(); // prvním zpracovaným záznamem odstraníme hlášku o čekání na data
     if (!record || typeof record.ID === 'undefined') return;
     const id = String(record.ID);
     const isInactive = (record.IsInactive === "true" || record.IsInactive === true);
@@ -213,10 +212,15 @@ function startWebsocket(lineFilter = null) {
     ws = new WebSocket(STREAM_URL);
     ws.addEventListener('open', () => { sendFilter(ws, lineFilter); });
     ws.addEventListener('message', ev => {
-        if (typeof ev.data === 'string') handleMessage(ev.data);
-        else {
+        if (typeof ev.data === 'string') {
+            handleMessage(ev.data);
+            _hideAndRemoveWsOverlay(); // prvním zpracovaným záznamem odstraníme hlášku o čekání na data
+        } else {
             const reader = new FileReader();
-            reader.onload = () => handleMessage(reader.result);
+            reader.onload = () => {
+                handleMessage(reader.result);
+                _hideAndRemoveWsOverlay(); // prvním zpracovaným záznamem odstraníme hlášku o čekání na data
+            }
             reader.readAsText(ev.data);
         }
     });
