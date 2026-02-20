@@ -120,7 +120,7 @@ function updateMarkerIcon(marker, bearing, lineId, lineName, isInactive, vtype, 
         const newIcon = createTriangleIcon(bearing, size, color, txt);
         marker.setIcon(newIcon);
     } else {
-        const newIconCircle = createCircleIcon(bearing, size, color, txt);
+        const newIconCircle = createCircleIcon(bearing, 28, color, txt);
         marker.setIcon(newIconCircle);
     }
     //marker.setIcon(newIcon);
