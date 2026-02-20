@@ -177,24 +177,11 @@ function processRecord(record) {
         updateMarkerIcon(marker, bearing, lineId, lineName, isInactive, vtype);
         if (marker.getPopup()) marker.setPopupContent(popup);
     } else {
-        if (!isInactive) {
-            const iconTri = createTriangleIcon(bearing, 36, colorForLine(lineId, vtype), lineName !== undefined ? String(lineName) : '');
-
-            const markerTri = L.marker([lat, lng], {iconTri});
-            markerTri.bindPopup(popup);
-            markerTri.addTo(map);
-            vehicles.set(id, markerTri); } else {
-            const iconCir = createCircleIcon(bearing, 36, colorForLine(lineId, vtype), lineName !== undefined ? String(lineName) : '');
-
-            const markerCir = L.marker([lat, lng], {iconCir});
-            markerCir.bindPopup(popup);
-            markerCir.addTo(map);
-            vehicles.set(id, markerCir);
-        }
-        //const marker = L.marker([lat, lng], {icon});
-        //marker.bindPopup(popup);
-        //marker.addTo(map);
-        //vehicles.set(id, marker);
+        const icon = createTriangleIcon(bearing, 36, colorForLine(lineId, vtype), lineName !== undefined ? String(lineName) : '');
+        const marker = L.marker([lat, lng], {icon});
+        marker.bindPopup(popup);
+        marker.addTo(map);
+        vehicles.set(id, marker);
     }
 }
 
