@@ -92,7 +92,7 @@ function createCircleHtml(bearing=0, size=36, fillColor='#1978c8', lineText='') 
 
 // vytvoří L.divIcon
 function createTriangleIcon(bearing=0, size=36, fillColor='#1978c8', lineText='') {
-    const html = createCircleHtml(bearing, size, fillColor, lineText);
+    const html = createTriangleHtml(bearing, size, fillColor, lineText);
     return L.divIcon({
         html,
         className: '',
@@ -101,8 +101,8 @@ function createTriangleIcon(bearing=0, size=36, fillColor='#1978c8', lineText=''
     });
 }
 
-function createCircleIcon(size=36, fillColor='#1978c8', lineText='') {
-    const html = createTriangleHtml(bearing, size, fillColor, lineText);
+function createCircleIcon(bearing, size=36, fillColor='#1978c8', lineText='') {
+    const html = createCircleHtml(bearing, size, fillColor, lineText);
     return L.divIcon({
         html,
         className: '',
@@ -116,9 +116,9 @@ function createCircleIcon(size=36, fillColor='#1978c8', lineText='') {
 function updateMarkerIcon(marker, bearing, lineId, lineName, isInactive, vtype, size=36) {
     const color = colorForLine(lineId, vtype, isInactive);
     const txt = (lineName !== undefined && lineName !== null) ? String(lineName) : '';
-    if !isInactive {
-        const newIcon = createTriangleIcon(size, color, txt);
-    } else{
+    if (!isInactive) {
+        const newIcon = createTriangleIcon(bearing, size, color, txt);
+    } else {
         const newIcon = createCircleIcon(bearing, size, color, txt);
     }
     marker.setIcon(newIcon);
