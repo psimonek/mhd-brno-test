@@ -184,25 +184,3 @@ function stopWebsocket() {
     ws = null;
 }
 
-// --- UI ---
-const startBtn = document.getElementById('startBtn');
-const stopBtn = document.getElementById('stopBtn');
-
-startBtn.addEventListener('click', () => {
-    if (trackingButton) return;
-    trackingButton = true;
-    startBtn.disabled = true;
-    stopBtn.disabled = false;
-    startWebsocket();
-});
-
-stopBtn.addEventListener('click', () => {
-    if (!trackingButton) return;
-    trackingButton = false;
-    startBtn.disabled = false;
-    stopBtn.disabled = true;
-    stopWebsocket();
-    for (const m of vehicles.values()) map.removeLayer(m);
-    vehicles.clear();
-});
-
