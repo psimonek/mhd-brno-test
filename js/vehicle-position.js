@@ -217,15 +217,10 @@ function sendFilter(wsInstance, lineFilter = null) {
 
 function startWebsocket(lineFilter = null) {
     if (ws) return;
-    _wsManuallyClosed = false; // při novém startu to není manuální uzavření
-    _showWsOverlayMessage('Čekám na data o poloze vozidel...');
+    _showWsOverlay(); // zobrazíme hlášku o čekání na data
     ws = new WebSocket(STREAM_URL);
-
     ws.addEventListener('open', () => { sendFilter(ws, lineFilter); });
-
     ws.addEventListener('message', ev => {
-        // na první přijatou zprávu skryjeme overlay
-        _hideAndRemoveWsOverlay();
         if (typeof ev.data === 'string') handleMessage(ev.data);
         else {
             const reader = new FileReader();
@@ -233,34 +228,24 @@ function startWebsocket(lineFilter = null) {
             reader.readAsText(ev.data);
         }
     });
-
-    ws.addEventListener('error', () => {
-        // chyba spojení — zobrazíme trvalou chybovou hlášku (pokud to nebylo manuální)
-        if (!_wsManuallyClosed) _showWsOverlayMessage('Data o poloze nejsou nyní dostupná');
-    });
-
-    ws.addEventListener('close', () => {
-        ws = null;
-        // rozdělíme neočekávané close a manuální close
-        if (!_wsManuallyClosed) _showWsOverlayMessage('Data o poloze nejsou nyní dostupná');
-    });
+    ws.addEventListener('close', () => { ws = null; });
+    ws.addEventListener('error', () => { /* ignore */ });
 }
 
 function stopWebsocket() {
     if (!ws) {
         _hideAndRemoveWsOverlay();
-        _wsManuallyClosed = false;
+        // reset příznaků tak, aby další start fungoval korektně
+        _overlayCheckStarted = false;
+        _wsOverlayHidden = false;
         return;
     }
-    try {
-        _wsManuallyClosed = true; // označíme, že my iniciujeme zavření
-        ws.close();
-    } catch (e) {}
+    try { ws.close(); } catch(e) {}
     ws = null;
     _hideAndRemoveWsOverlay();
-    _wsManuallyClosed = false;
+    _overlayCheckStarted = false;
+    _wsOverlayHidden = false;
 }
-
 
 // Nastavení a skriptování zprávy o čekání na data o poloze vozidel
 
@@ -274,50 +259,67 @@ function _createWsOverlayIfNeeded() {
     el.style.left = '50%';
     el.style.top = '50%';
     el.style.transform = 'translate(-50%, -50%)';
-    el.style.zIndex = '2147483647';
+    el.style.zIndex = '2147483647'; // velmi vysoký z-index
     el.style.pointerEvents = 'none';
-    el.style.padding = '14px 20px';
-    el.style.background = 'linear-gradient(135deg,#222,#111)';
+    el.style.padding = '18px 26px';
+    el.style.background = 'linear-gradient(135deg, rgba(20,20,20,0.95), rgba(40,40,40,0.95))';
     el.style.color = '#fff';
-    el.style.borderRadius = '10px';
+    el.style.borderRadius = '12px';
     el.style.boxShadow = '0 8px 30px rgba(0,0,0,0.5)';
     el.style.fontFamily = 'Inter, Roboto, system-ui, Arial, sans-serif';
-    el.style.fontSize = '15px';
+    el.style.fontSize = '16px';
     el.style.fontWeight = '600';
-    el.style.backdropFilter = 'blur(6px)';
+    el.style.backdropFilter = 'blur(6px) saturate(120%)';
     el.style.opacity = '0';
-    el.style.transition = 'opacity 200ms ease';
+    el.style.transition = 'opacity 220ms ease';
     el.style.display = 'flex';
+    el.style.gap = '12px';
     el.style.alignItems = 'center';
-    el.style.gap = '10px';
+    el.style.pointerEvents = 'none';
+
+    // jednoduché spinner SVG
+    const spinner = document.createElement('div');
+    spinner.innerHTML = `
+    <svg width="20" height="20" viewBox="0 0 50 50" style="display:block;opacity:0.95">
+      <circle cx="25" cy="25" r="20" stroke="rgba(255,255,255,0.12)" stroke-width="6" fill="none"></circle>
+      <path d="M45 25a20 20 0 0 0-20-20" stroke="#ffffff" stroke-width="6" stroke-linecap="round" fill="none">
+        <animateTransform attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="0.9s" repeatCount="indefinite" />
+      </path>
+    </svg>
+  `;
+    spinner.style.flex = '0 0 auto';
+    el.appendChild(spinner);
+
+    const text = document.createElement('div');
+    text.textContent = 'Čekám na data o poloze vozidel...';
+    text.style.pointerEvents = 'none';
+    el.appendChild(text);
+
     document.body.appendChild(el);
-    requestAnimationFrame(() => el.style.opacity = '1');
+
+    // force reflow then fade in
+    requestAnimationFrame(() => { el.style.opacity = '1'; });
 }
 
-function _showWsOverlayMessage(text) {
+function _showWsOverlay() {
+    // reset příznaků při novém zobrazení
+    _overlayCheckStarted = false;
+    _wsOverlayHidden = false;
     _createWsOverlayIfNeeded();
     const el = document.getElementById(_wsOverlayId);
     if (!el) return;
-    el.innerHTML = `
-    <svg width="18" height="18" viewBox="0 0 24 24" style="flex:0 0 auto;opacity:0.9">
-      <path fill="#fff" d="M11 15h2v2h-2z"></path>
-      <path fill="#fff" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 15c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1s1 .45 1 1v4c0 .55-.45 1-1 1zm0-10c-.83 0-1.5.67-1.5 1.5S11.17 10 12 10s1.5-.67 1.5-1.5S12.83 7 12 7z"/>
-    </svg>
-    <div style="pointer-events:none">${text}</div>
-  `;
     el.style.display = 'flex';
-    el.style.pointerEvents = 'none';
-    _wsOverlayHidden = false;
-    requestAnimationFrame(() => el.style.opacity = '1');
+    requestAnimationFrame(() => { el.style.opacity = '1'; });
 }
 
 function _hideAndRemoveWsOverlay() {
     const el = document.getElementById(_wsOverlayId);
     if (!el) return;
+    // prevent multiple removals
     if (_wsOverlayHidden) return;
     _wsOverlayHidden = true;
     el.style.opacity = '0';
-    setTimeout(() => { const e = document.getElementById(_wsOverlayId); if (e && e.parentNode) e.parentNode.removeChild(e); }, 220);
+    setTimeout(() => { const e = document.getElementById(_wsOverlayId); if (e && e.parentNode) e.parentNode.removeChild(e); }, 260);
 }
 
 function _hideOverlayAfterMarkersRendered() {
@@ -341,7 +343,4 @@ function _hideOverlayAfterMarkersRendered() {
     })();
 }
 
-
-
 // Konec zprávy o čekání na načtení dat polohy vozidel
-
