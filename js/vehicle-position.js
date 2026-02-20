@@ -83,7 +83,7 @@ function createTriangleIcon(bearing=0, size=36, fillColor='#1978c8', lineText=''
 }
 
 // aktualizace ikony u existujícího markeru (přehození na novou divIcon)
-function updateMarkerIcon(marker, bearing, lineId, lineName, size=36) {
+function updateMarkerIcon(marker, bearing, lineId, lineName, isInactive, size=36) {
     const color = colorForLine(lineId, vtype, isInactive);
     const txt = (lineName !== undefined && lineName !== null) ? String(lineName) : '';
     const newIcon = createTriangleIcon(bearing, size, color, txt);
@@ -138,7 +138,7 @@ function processRecord(record) {
     if (vehicles.has(id)) {
         const marker = vehicles.get(id);
         marker.setLatLng([lat, lng]);
-        updateMarkerIcon(marker, bearing, lineID, lineName);
+        updateMarkerIcon(marker, bearing, lineID, lineName, isInactive);
         if (marker.getPopup()) marker.setPopupContent(popup);
     } else {
         const icon = createTriangleIcon(bearing, 36, colorForLine(lineId, vtype, isInactive), lineName !== undefined ? String(lineName) : '');
