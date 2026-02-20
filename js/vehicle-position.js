@@ -191,7 +191,7 @@ function processRecord(record) {
         if (!isInactive) {
             const icon = createTriangleIcon(bearing, 38, colorForLine(lineId, vtype), lineName !== undefined ? String(lineName) : '');
             const marker = L.marker([lat, lng], {icon});
-            marker.bindTooltip(tooltipDelay, { permanent: false, direction: 'top' });
+            marker.bindTooltip(tooltipDelay, { permanent: true, direction: 'top' });
             marker.bindPopup(popup);
             marker.addTo(map);
 
