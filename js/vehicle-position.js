@@ -121,8 +121,10 @@ function updateMarkerIcon(marker, bearing, lineId, lineName, isInactive, vtype, 
     const color = colorForLine(lineId, vtype, isInactive);
     const txt = (lineName !== undefined && lineName !== null) ? String(lineName) : '';
     if (!isInactive) {
+        console.log("aktivní");
         const newIcon = createTriangleIcon(bearing, size, color, txt);
     } else {
+        console.log("----- neaktivní");
         const newIcon = createCircleIcon(bearing, size, color, txt);
     }
     marker.setIcon(newIcon);
