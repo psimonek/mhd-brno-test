@@ -205,3 +205,17 @@ stopBtn.addEventListener('click', () => {
     for (const m of vehicles.values()) map.removeLayer(m);
     vehicles.clear();
 });
+
+vehicleButton.addEventListener('click', () => {
+    if (!trackingButton) {
+        trackingButton = true;
+        startWebsocket();
+        vehiclebutton.style.backgroundColor = 'orange';
+    } else {
+        trackingButton = false;
+        stopWebsocket();
+        for (const m of vehicles.values()) map.removeLayer(m);
+        vehicles.clear();
+        vehiclebutton.style.backgroundColor = 'white';
+    }
+});
