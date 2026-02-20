@@ -158,6 +158,10 @@ function processRecord(record) {
     //}
     const lat = Number(record.Lat);
     const lng = Number(record.Lng);
+
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+    _hideOverlayAfterMarkersRendered(); // spustí se jen jednou
+
     const bearing = Number(record.Bearing || 0);
     const lineId = record.LineID;
     const lineName = record.LineName;
@@ -212,15 +216,10 @@ function startWebsocket(lineFilter = null) {
     ws = new WebSocket(STREAM_URL);
     ws.addEventListener('open', () => { sendFilter(ws, lineFilter); });
     ws.addEventListener('message', ev => {
-        if (typeof ev.data === 'string') {
-            handleMessage(ev.data);
-            _hideAndRemoveWsOverlay(); // prvním zpracovaným záznamem odstraníme hlášku o čekání na data
-        } else {
+        if (typeof ev.data === 'string') handleMessage(ev.data);
+        else {
             const reader = new FileReader();
-            reader.onload = () => {
-                handleMessage(reader.result);
-                _hideAndRemoveWsOverlay(); // prvním zpracovaným záznamem odstraníme hlášku o čekání na data
-            }
+            reader.onload = () => handleMessage(reader.result);
             reader.readAsText(ev.data);
         }
     });
@@ -310,6 +309,29 @@ function _hideAndRemoveWsOverlay() {
     // remove after transition
     setTimeout(() => { if (el && el.parentNode) el.parentNode.removeChild(el); }, 260);
 }
+
+let _overlayCheckStarted = false;
+
+function _hideOverlayAfterMarkersRendered() {
+    if (_overlayCheckStarted) return;
+    _overlayCheckStarted = true;
+    const maxWait = 7000;
+    const start = performance.now();
+
+    (function check() {
+        const anyMarker = document.querySelector('.leaflet-marker-icon, .leaflet-marker-pane div, .leaflet-marker-pane img');
+        if (anyMarker) {
+            _hideAndRemoveWsOverlay();
+            return;
+        }
+        if (performance.now() - start > maxWait) {
+            _hideAndRemoveWsOverlay();
+            return;
+        }
+        setTimeout(check, 80);
+    })();
+}
+
 
 // Konec zprávy o čekání na načtení dat polohy vozidel
 
