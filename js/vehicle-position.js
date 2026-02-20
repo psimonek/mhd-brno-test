@@ -78,7 +78,7 @@ function createCircleHtml(bearing=0, size=36, fillColor='#1978c8', lineText='') 
                 fill="${fillColor}" stroke="#ffffff" stroke-width="1.5" />
       </svg>
     `;
-    const textHtml = lineText ? `<div style="position:absolute;left:0;top:50%;width:${size}px;margin-top:-0.8em;text-align:center;font-weight:800;color:#ffffff;font-size:${Math.floor(size/3.2)}px;text-shadow:0 0 2px rgba(0,0,0,0.5);pointer-events:none;">${lineText}</div>` : '';
+    const textHtml = lineText ? `<div style="position:absolute;left:0;top:50%;width:${size}px;margin-top:-0.7em;text-align:center;font-weight:800;color:#ffffff;font-size:${Math.floor(size/3.2)}px;text-shadow:0 0 2px rgba(0,0,0,0.5);pointer-events:none;">${lineText}</div>` : '';
     const wrapper = `
       <div style="position:relative; width:${size}px; height:${size}px; display:inline-block; transform: rotate(${bearing}deg);">
         ${svg}
