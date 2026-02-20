@@ -486,6 +486,62 @@
 		};	
 		locateButton.addTo(map);
 
+
+
+
+
+
+
+
+
+
+
+        // Přidání tlačítka pro aktivaci polohy vozidel
+        var vehicleButton = L.control({position: 'topright'});
+
+        vehicleButton.onAdd = function (map) {
+            var vehiclebutton = L.DomUtil.create('button', 'vehicle-button');
+            vehiclebutton.style.backgroundColor = 'white'; // Nastavení počáteční barvy pozadí
+            vehiclebutton.style.border = '2px solid rgba(0,0,0,0.2)'; // Nastavení okraje
+            vehiclebutton.style.cursor = 'pointer'; // Změna kurzoru na ruku
+            vehiclebutton.style.width = '48px';
+            vehiclebutton.style.height = '48px';
+            vehiclebutton.style.padding = '0px';
+
+            // Přidání ikony do tlačítka
+            var vehicleicon = L.DomUtil.create('img', 'vehicle-icon');
+            vehicleicon.src = 'img/place.svg'; // Zde zadejte cestu k vaší ikoně
+            vehicleicon.style.width = '24px'; // Nastavení šířky ikony
+            vehicleicon.style.height = '24px'; // Nastavení výšky ikony
+            vehicleicon.style.display = 'block'; // Zajištění, že ikona je blokový prvek
+            vehicleicon.style.margin = 'auto'; // Vycentrování ikony
+            vehicleicon.style.padding = '0px';
+            vehiclebutton.appendChild(vehicleicon);
+
+            vehiclebutton.onclick = function() {
+                getLocation();
+                // Změna barvy pozadí tlačítka podle stavu sledování
+                if (!tracking) {
+                    vehiclebutton.style.backgroundColor = 'white'; // Deaktivace - bílá barva
+                } else {
+                    vehiclebutton.style.backgroundColor = 'orange'; // Aktivace - oranžová barva
+                }
+            };
+            return vehiclebutton;
+        };
+        vehicleButton.addTo(map);
+
+
+
+
+
+
+
+
+
+
+
+
 		// Nastavení tříd při změně režimů z tmavého na světlý a obráceně
     	
     	function setTheme() {

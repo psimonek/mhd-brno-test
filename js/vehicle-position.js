@@ -57,7 +57,7 @@ function createTriangleHtml(bearing=0, size=36, fillColor='#1978c8', lineText=''
     // - nad ním absolutně pozicovaný text bez rotace
     const svg = `
       <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
-        <polygon points="${half},2 ${size-2},${size-2} 2,${size-2}"
+        <polygon points="${half},2 ${size-2},${size-2} $(half),$(size-6) 2,${size-2}"
                  fill="${fillColor}" stroke="#ffffff" stroke-width="2" />
       </svg>
     `;
