@@ -7,6 +7,11 @@ const STREAM_URL = 'wss://gis.brno.cz/geoevent/ws/services/stream_kordis_26/Stre
 
 const stopsMap = new Map(); // normalizedId (číslo jako string) -> název
 
+let _overlayCheckStarted = false;
+let _wsOverlayHidden = false;
+const _wsOverlayId = 'ws-loading-overlay-duckai';
+
+
 // Načte stops.csv a uloží mapu s klíči normalizovanými tak, že z hodnot
 // jako "U1234Z1" získá "1234".
 async function loadStopsCsv(url = 'stops.csv') {
@@ -158,9 +163,9 @@ function processRecord(record) {
     //}
     const lat = Number(record.Lat);
     const lng = Number(record.Lng);
-
     if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
-    _hideOverlayAfterMarkersRendered(); // spustí se jen jednou
+
+    _hideOverlayAfterMarkersRendered(); // spustí se pouze jednou díky _overlayCheckStarted
 
     const bearing = Number(record.Bearing || 0);
     const lineId = record.LineID;
@@ -229,19 +234,22 @@ function startWebsocket(lineFilter = null) {
 
 function stopWebsocket() {
     if (!ws) {
-        // Pro jistotu i zde zajistíme, že zpráva o čekání na data o poloze nebudou zobrazena
         _hideAndRemoveWsOverlay();
+        // reset příznaků tak, aby další start fungoval korektně
+        _overlayCheckStarted = false;
+        _wsOverlayHidden = false;
         return;
     }
     try { ws.close(); } catch(e) {}
     ws = null;
     _hideAndRemoveWsOverlay();
+    _overlayCheckStarted = false;
+    _wsOverlayHidden = false;
 }
 
 // Nastavení a skriptování zprávy o čekání na data o poloze vozidel
 
 // --- Loading overlay komponenta ---
-const _wsOverlayId = 'ws-loading-overlay-duckai';
 
 function _createWsOverlayIfNeeded() {
     if (document.getElementById(_wsOverlayId)) return;
@@ -294,23 +302,25 @@ function _createWsOverlayIfNeeded() {
 }
 
 function _showWsOverlay() {
+    // reset příznaků při novém zobrazení
+    _overlayCheckStarted = false;
+    _wsOverlayHidden = false;
     _createWsOverlayIfNeeded();
     const el = document.getElementById(_wsOverlayId);
     if (!el) return;
     el.style.display = 'flex';
-    // ensure visible
     requestAnimationFrame(() => { el.style.opacity = '1'; });
 }
 
 function _hideAndRemoveWsOverlay() {
     const el = document.getElementById(_wsOverlayId);
     if (!el) return;
+    // prevent multiple removals
+    if (_wsOverlayHidden) return;
+    _wsOverlayHidden = true;
     el.style.opacity = '0';
-    // remove after transition
-    setTimeout(() => { if (el && el.parentNode) el.parentNode.removeChild(el); }, 260);
+    setTimeout(() => { const e = document.getElementById(_wsOverlayId); if (e && e.parentNode) e.parentNode.removeChild(e); }, 260);
 }
-
-let _overlayCheckStarted = false;
 
 function _hideOverlayAfterMarkersRendered() {
     if (_overlayCheckStarted) return;
@@ -319,7 +329,8 @@ function _hideOverlayAfterMarkersRendered() {
     const start = performance.now();
 
     (function check() {
-        const anyMarker = document.querySelector('.leaflet-marker-icon, .leaflet-marker-pane div, .leaflet-marker-pane img');
+        // detekce elementů Leaflet markerů (pokryje divIcon i img-based markery)
+        const anyMarker = document.querySelector('.leaflet-marker-icon, .leaflet-marker-pane img, .leaflet-marker-pane div');
         if (anyMarker) {
             _hideAndRemoveWsOverlay();
             return;
@@ -331,6 +342,7 @@ function _hideOverlayAfterMarkersRendered() {
         setTimeout(check, 80);
     })();
 }
+
 
 
 // Konec zprávy o čekání na načtení dat polohy vozidel
