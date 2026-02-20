@@ -179,7 +179,7 @@ function processRecord(record) {
     const finalStopName = stopsMap.get(lookupKey) || rawFinalStop || '';
 
     const popup = `Linka: ${record.LineName || lineId || ''}, kurz: ${record.Course}<br>Do: ${finalStopName} <br>Zpoždění: ${record.Delay} min.`;
-    const tooltipDelay = record.Delay;
+    const tooltipDelay = `${record.Delay}`;
 
     if (vehicles.has(id)) {
         const marker = vehicles.get(id);
@@ -191,7 +191,7 @@ function processRecord(record) {
         if (!isInactive) {
             const icon = createTriangleIcon(bearing, 38, colorForLine(lineId, vtype), lineName !== undefined ? String(lineName) : '');
             const marker = L.marker([lat, lng], {icon});
-            marker.bindTooltip(tooltipDelay, { permanent: true, direction: 'top' });
+            marker.bindTooltip(tooltipDelay, { permanent: false, direction: 'top' });
             marker.bindPopup(popup);
             marker.addTo(map);
 
