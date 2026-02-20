@@ -50,7 +50,6 @@ function colorForLine(lineId, vtype, isInactive) {
 // SVG trojúhelník s bílým outline (stroke) a číslem linky nezávislým na rotaci
 function createTriangleHtml(bearing=0, size=36, fillColor='#1978c8', lineText='') {
     const half = size / 2;
-    console.log("TROJÚHELNÍK - HTML");
     // trojúhelník orientovaný špičkou nahoru; polygon má bílý stroke pro outline
     // číslo linky vložíme jako <text> s opačnou rotací (rotate(-bearing)) tak, aby zůstalo rovné
     // ale protože text uvnitř rotovaného wrapperu by se také rotoval, vytvoříme dvě vrstvy:
@@ -74,7 +73,6 @@ function createTriangleHtml(bearing=0, size=36, fillColor='#1978c8', lineText=''
 
 function createCircleHtml(bearing=0, size=36, fillColor='#1978c8', lineText='') {
     // Vytvoření kružnice s daným poloměrem
-    console.log("KRUŽNICE - HTML");
     const svg = `
       <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
         <circle cx="${size / 2}" cy="${size / 2}" r="${size / 2 - 2}" 
@@ -88,6 +86,7 @@ function createCircleHtml(bearing=0, size=36, fillColor='#1978c8', lineText='') 
         ${textHtml}
       </div>
     `;
+    console.log(wrapper);
     return wrapper;
 }
 
@@ -95,7 +94,6 @@ function createCircleHtml(bearing=0, size=36, fillColor='#1978c8', lineText='') 
 // vytvoří L.divIcon
 function createTriangleIcon(bearing=0, size=36, fillColor='#1978c8', lineText='') {
     const html = createTriangleHtml(bearing, size, fillColor, lineText);
-    console.log("TROJÚHELNÍK - ICON");
     return L.divIcon({
         html,
         className: '',
@@ -106,7 +104,6 @@ function createTriangleIcon(bearing=0, size=36, fillColor='#1978c8', lineText=''
 
 function createCircleIcon(bearing, size=36, fillColor='#1978c8', lineText='') {
     const html = createCircleHtml(bearing, size, fillColor, lineText);
-    console.log("KRUŽNICE - ICON");
     return L.divIcon({
         html,
         className: '',
@@ -121,10 +118,8 @@ function updateMarkerIcon(marker, bearing, lineId, lineName, isInactive, vtype, 
     const color = colorForLine(lineId, vtype, isInactive);
     const txt = (lineName !== undefined && lineName !== null) ? String(lineName) : '';
     if (!isInactive) {
-        console.log("aktivní");
         const newIcon = createTriangleIcon(bearing, size, color, txt);
     } else {
-        console.log("----- neaktivní");
         const newIcon = createCircleIcon(bearing, size, color, txt);
     }
     marker.setIcon(newIcon);
