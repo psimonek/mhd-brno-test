@@ -70,7 +70,7 @@ function createTriangleHtml(bearing=0, size=36, fillColor='#1978c8', lineText=''
     return wrapper;
 }
 
-function createCircleHtml(bearing=0, size=36, fillColor='#1978c8', lineText='') {
+function createCircleHtml(bearing=0, size=28, fillColor='#1978c8', lineText='') {
     // Vytvoření kružnice s daným poloměrem
     const svg = `
       <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
