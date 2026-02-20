@@ -38,7 +38,6 @@ function colorForLine(lineId, vtype, isInactive) {
     const id = Number(lineId) || 0;
     const vt = Number(vtype);
     if (vt == 5) return '#c66b4b';
-    if (isInactive) return '#ffffff';
     if (id >= 1 && id <= 20) return '#d32d2a';       // červená
     if (id >= 21 && id <= 39) return '#4ca14c';      // zelená
     if (id >= 40 && id <= 88) return '#247ac8';      // modrá
@@ -79,14 +78,13 @@ function createCircleHtml(bearing=0, size=36, fillColor='#1978c8', lineText='') 
                 fill="${fillColor}" stroke="#ffffff" stroke-width="1.5" />
       </svg>
     `;
-    const textHtml = lineText ? `<div style="position:absolute;left:0;top:60%;width:${size}px;margin-top:-0.6em;text-align:center;font-weight:800;color:#ffffff;font-size:${Math.floor(size/3.4)}px;text-shadow:0 0 2px rgba(0,0,0,0.5);pointer-events:none;">${lineText}</div>` : '';
+    const textHtml = lineText ? `<div style="position:absolute;left:0;top:50%;width:${size}px;margin-top:-0.5em;text-align:center;font-weight:800;color:#ffffff;font-size:${Math.floor(size/3.4)}px;text-shadow:0 0 2px rgba(0,0,0,0.5);pointer-events:none;">${lineText}</div>` : '';
     const wrapper = `
       <div style="position:relative; width:${size}px; height:${size}px; display:inline-block; transform: rotate(${bearing}deg);">
         ${svg}
         ${textHtml}
       </div>
     `;
-    console.log(wrapper);
     return wrapper;
 }
 
