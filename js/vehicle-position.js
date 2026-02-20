@@ -71,8 +71,37 @@ function createTriangleHtml(bearing=0, size=36, fillColor='#1978c8', lineText=''
     return wrapper;
 }
 
+function createCircleHtml(bearing=0, size=36, fillColor='#1978c8', lineText='') {
+    // Vytvoření kružnice s daným poloměrem
+    const svg = `
+      <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="${size / 2}" cy="${size / 2}" r="${size / 2 - 2}" 
+                fill="${fillColor}" stroke="#ffffff" stroke-width="1.5" />
+      </svg>
+    `;
+    const textHtml = lineText ? `<div style="position:absolute;left:0;top:60%;width:${size}px;margin-top:-0.6em;text-align:center;font-weight:800;color:#ffffff;font-size:${Math.floor(size/3.4)}px;text-shadow:0 0 2px rgba(0,0,0,0.5);pointer-events:none;">${lineText}</div>` : '';
+    const wrapper = `
+      <div style="position:relative; width:${size}px; height:${size}px; display:inline-block; transform: rotate(${bearing}deg);">
+        ${svg}
+        ${textHtml}
+      </div>
+    `;
+    return wrapper;
+}
+
+
 // vytvoří L.divIcon
 function createTriangleIcon(bearing=0, size=36, fillColor='#1978c8', lineText='') {
+    const html = createCircleHtml(bearing, size, fillColor, lineText);
+    return L.divIcon({
+        html,
+        className: '',
+        iconSize: [size, size],
+        iconAnchor: [size/2, size/2]
+    });
+}
+
+function createCircleIcon(size=36, fillColor='#1978c8', lineText='') {
     const html = createTriangleHtml(bearing, size, fillColor, lineText);
     return L.divIcon({
         html,
@@ -82,11 +111,16 @@ function createTriangleIcon(bearing=0, size=36, fillColor='#1978c8', lineText=''
     });
 }
 
+
 // aktualizace ikony u existujícího markeru (přehození na novou divIcon)
 function updateMarkerIcon(marker, bearing, lineId, lineName, isInactive, vtype, size=36) {
     const color = colorForLine(lineId, vtype, isInactive);
     const txt = (lineName !== undefined && lineName !== null) ? String(lineName) : '';
-    const newIcon = createTriangleIcon(bearing, size, color, txt);
+    if !isInactive {
+        const newIcon = createTriangleIcon(size, color, txt);
+    } else{
+        const newIcon = createCircleIcon(bearing, size, color, txt);
+    }
     marker.setIcon(newIcon);
 }
 
