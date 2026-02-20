@@ -179,7 +179,7 @@ function processRecord(record) {
     const finalStopName = stopsMap.get(lookupKey) || rawFinalStop || '';
 
     const popup = `Linka: ${record.LineName || lineId || ''}, kurz: ${record.Course}<br>Do: ${finalStopName} <br>Zpoždění: ${record.Delay} min.`;
-    const tooltipDelay = `${record.Delay}`;
+    const tooltipDelay = `${record.Delay} min.`;
 
     if (vehicles.has(id)) {
         const marker = vehicles.get(id);
