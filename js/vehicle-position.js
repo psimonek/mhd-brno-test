@@ -148,6 +148,7 @@ function processEnvelope(envelope) {
 }
 
 function processRecord(record) {
+    _hideAndRemoveWsOverlay(); // prvním zpracovaným záznamem odstraníme hlášku o čekání na data
     if (!record || typeof record.ID === 'undefined') return;
     const id = String(record.ID);
     const isInactive = (record.IsInactive === "true" || record.IsInactive === true);
@@ -208,6 +209,7 @@ function sendFilter(wsInstance, lineFilter = null) {
 
 function startWebsocket(lineFilter = null) {
     if (ws) return;
+    _showWsOverlay(); // zobrazíme hlášku o čekání na data
     ws = new WebSocket(STREAM_URL);
     ws.addEventListener('open', () => { sendFilter(ws, lineFilter); });
     ws.addEventListener('message', ev => {
@@ -223,8 +225,87 @@ function startWebsocket(lineFilter = null) {
 }
 
 function stopWebsocket() {
-    if (!ws) return;
+    if (!ws) {
+        // Pro jistotu i zde zajistíme, že zpráva o čekání na data o poloze nebudou zobrazena
+        _hideAndRemoveWsOverlay();
+        return;
+    }
     try { ws.close(); } catch(e) {}
     ws = null;
+    _hideAndRemoveWsOverlay();
 }
+
+// Nastavení a skriptování zprávy o čekání na data o poloze vozidel
+
+// --- Loading overlay komponenta ---
+const _wsOverlayId = 'ws-loading-overlay-duckai';
+
+function _createWsOverlayIfNeeded() {
+    if (document.getElementById(_wsOverlayId)) return;
+    const el = document.createElement('div');
+    el.id = _wsOverlayId;
+    el.style.position = 'fixed';
+    el.style.left = '50%';
+    el.style.top = '50%';
+    el.style.transform = 'translate(-50%, -50%)';
+    el.style.zIndex = '2147483647'; // velmi vysoký z-index
+    el.style.pointerEvents = 'none';
+    el.style.padding = '18px 26px';
+    el.style.background = 'linear-gradient(135deg, rgba(20,20,20,0.95), rgba(40,40,40,0.95))';
+    el.style.color = '#fff';
+    el.style.borderRadius = '12px';
+    el.style.boxShadow = '0 8px 30px rgba(0,0,0,0.5)';
+    el.style.fontFamily = 'Inter, Roboto, system-ui, Arial, sans-serif';
+    el.style.fontSize = '16px';
+    el.style.fontWeight = '600';
+    el.style.backdropFilter = 'blur(6px) saturate(120%)';
+    el.style.opacity = '0';
+    el.style.transition = 'opacity 220ms ease';
+    el.style.display = 'flex';
+    el.style.gap = '12px';
+    el.style.alignItems = 'center';
+    el.style.pointerEvents = 'none';
+
+    // jednoduché spinner SVG
+    const spinner = document.createElement('div');
+    spinner.innerHTML = `
+    <svg width="20" height="20" viewBox="0 0 50 50" style="display:block;opacity:0.95">
+      <circle cx="25" cy="25" r="20" stroke="rgba(255,255,255,0.12)" stroke-width="6" fill="none"></circle>
+      <path d="M45 25a20 20 0 0 0-20-20" stroke="#ffffff" stroke-width="6" stroke-linecap="round" fill="none">
+        <animateTransform attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="0.9s" repeatCount="indefinite" />
+      </path>
+    </svg>
+  `;
+    spinner.style.flex = '0 0 auto';
+    el.appendChild(spinner);
+
+    const text = document.createElement('div');
+    text.textContent = 'Čekám na data o poloze vozidel...';
+    text.style.pointerEvents = 'none';
+    el.appendChild(text);
+
+    document.body.appendChild(el);
+
+    // force reflow then fade in
+    requestAnimationFrame(() => { el.style.opacity = '1'; });
+}
+
+function _showWsOverlay() {
+    _createWsOverlayIfNeeded();
+    const el = document.getElementById(_wsOverlayId);
+    if (!el) return;
+    el.style.display = 'flex';
+    // ensure visible
+    requestAnimationFrame(() => { el.style.opacity = '1'; });
+}
+
+function _hideAndRemoveWsOverlay() {
+    const el = document.getElementById(_wsOverlayId);
+    if (!el) return;
+    el.style.opacity = '0';
+    // remove after transition
+    setTimeout(() => { if (el && el.parentNode) el.parentNode.removeChild(el); }, 260);
+}
+
+// Konec zprávy o čekání na načtení dat polohy vozidel
 
