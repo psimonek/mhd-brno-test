@@ -501,6 +501,7 @@
 
         vehicleButton.onAdd = function (map) {
             var vehiclebutton = L.DomUtil.create('button', 'vehicle-button');
+            vehiclebutton.id = 'vehiclebttn-id';
             vehiclebutton.style.backgroundColor = 'white'; // Nastavení počáteční barvy pozadí
             vehiclebutton.style.border = '2px solid rgba(0,0,0,0.2)'; // Nastavení okraje
             vehiclebutton.style.cursor = 'pointer'; // Změna kurzoru na ruku
@@ -522,7 +523,8 @@
         };
         vehicleButton.addTo(map);
 
-        vehicleButton.addEventListener('click', () => {
+        const vehiclebttn = document.getElementById('vehiclebttn-id');
+        vehiclebttn.addEventListener('click', () => {
             if (!trackingButton) {
                 trackingButton = true;
                 startWebsocket();
