@@ -518,18 +518,26 @@
             vehicleicon.style.padding = '0px';
             vehiclebutton.appendChild(vehicleicon);
 
-            vehiclebutton.onclick = function() {
-                getLocation();
-                // Změna barvy pozadí tlačítka podle stavu sledování
-                if (!tracking) {
-                    vehiclebutton.style.backgroundColor = 'white'; // Deaktivace - bílá barva
-                } else {
-                    vehiclebutton.style.backgroundColor = 'orange'; // Aktivace - oranžová barva
-                }
-            };
             return vehiclebutton;
         };
         vehicleButton.addTo(map);
+
+        vehicleButton.addEventListener('click', () => {
+            if (!trackingButton) {
+                trackingButton = true;
+                startWebsocket();
+                vehiclebutton.style.backgroundColor = 'orange';
+            } else {
+                trackingButton = false;
+                stopWebsocket();
+                for (const m of vehicles.values()) map.removeLayer(m);
+                vehicles.clear();
+                vehiclebutton.style.backgroundColor = 'white';
+            }
+        });
+
+
+
 
 
 
