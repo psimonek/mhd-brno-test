@@ -52,7 +52,7 @@ function colorForLine(lineId, vtype) {
 }
 
 // SVG trojúhelník s bílým outline (stroke) a číslem linky nezávislým na rotaci
-function createTriangleHtml(bearing=0, size=36, fillColor='#1978c8', lineText='') {
+function createTriangleHtml(bearing=0, size=38, fillColor='#1978c8', lineText='') {
     const half = size / 2;
     // trojúhelník orientovaný špičkou nahoru; polygon má bílý stroke pro outline
     // číslo linky vložíme jako <text> s opačnou rotací (rotate(-bearing)) tak, aby zůstalo rovné
@@ -75,7 +75,7 @@ function createTriangleHtml(bearing=0, size=36, fillColor='#1978c8', lineText=''
     return wrapper;
 }
 
-function createCircleHtml(bearing=0, size=28, fillColor='#1978c8', lineText='') {
+function createCircleHtml(bearing=0, size=30, fillColor='#1978c8', lineText='') {
     // Vytvoření kružnice s daným poloměrem
     const svg = `
       <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
@@ -95,7 +95,7 @@ function createCircleHtml(bearing=0, size=28, fillColor='#1978c8', lineText='') 
 
 
 // vytvoří L.divIcon
-function createTriangleIcon(bearing=0, size=36, fillColor='#1978c8', lineText='') {
+function createTriangleIcon(bearing=0, size=38, fillColor='#1978c8', lineText='') {
     const html = createTriangleHtml(bearing, size, fillColor, lineText);
     return L.divIcon({
         html,
@@ -105,7 +105,7 @@ function createTriangleIcon(bearing=0, size=36, fillColor='#1978c8', lineText=''
     });
 }
 
-function createCircleIcon(bearing, size=28, fillColor='#1978c8', lineText='') {
+function createCircleIcon(bearing, size=30, fillColor='#1978c8', lineText='') {
     const html = createCircleHtml(bearing, size, fillColor, lineText);
     return L.divIcon({
         html,
@@ -117,12 +117,12 @@ function createCircleIcon(bearing, size=28, fillColor='#1978c8', lineText='') {
 
 
 // aktualizace ikony u existujícího markeru (přehození na novou divIcon)
-function updateMarkerIcon(marker, bearing, lineId, lineName, isInactive, vtype, size=36) {
+function updateMarkerIcon(marker, bearing, lineId, lineName, isInactive, vtype, size=38) {
     const color = colorForLine(lineId, vtype);
     const txt = (lineName !== undefined && lineName !== null) ? String(lineName) : '';
 
     if (!isInactive) {
-        const newIcon = createTriangleIcon(bearing, size, color, txt);
+        const newIcon = createTriangleIcon(bearing, 38, color, txt);
         marker.setIcon(newIcon);
     } else {
         const newIconCircle = createCircleIcon(bearing, 30, color, txt);
@@ -187,7 +187,7 @@ function processRecord(record) {
         if (marker.getPopup()) marker.setPopupContent(popup);
     } else {
         if (!isInactive) {
-            const icon = createTriangleIcon(bearing, 36, colorForLine(lineId, vtype), lineName !== undefined ? String(lineName) : '');
+            const icon = createTriangleIcon(bearing, 38, colorForLine(lineId, vtype), lineName !== undefined ? String(lineName) : '');
             const marker = L.marker([lat, lng], {icon});
             marker.bindPopup(popup);
             marker.addTo(map);
