@@ -179,18 +179,22 @@ function processRecord(record) {
     const finalStopName = stopsMap.get(lookupKey) || rawFinalStop || '';
 
     const popup = `Linka: ${record.LineName || lineId || ''}, kurz: ${record.Course}<br>Do: ${finalStopName} <br>Zpoždění: ${record.Delay} min.`;
+    const tooltipDelay = record.Delay;
 
     if (vehicles.has(id)) {
         const marker = vehicles.get(id);
         marker.setLatLng([lat, lng]);
         updateMarkerIcon(marker, bearing, lineId, lineName, isInactive, vtype);
+        marker.setTooltipContent(tooltipDelay); // aktualizuje existující tooltip
         if (marker.getPopup()) marker.setPopupContent(popup);
     } else {
         if (!isInactive) {
             const icon = createTriangleIcon(bearing, 38, colorForLine(lineId, vtype), lineName !== undefined ? String(lineName) : '');
             const marker = L.marker([lat, lng], {icon});
+            marker.bindTooltip(tooltipDelay, { permanent: true, direction: 'top' });
             marker.bindPopup(popup);
             marker.addTo(map);
+
             vehicles.set(id, marker);
         } else {
             const icon = createCircleIcon(bearing, 30, colorForLine(lineId, vtype), lineName !== undefined ? String(lineName) : '');
