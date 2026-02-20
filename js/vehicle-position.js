@@ -100,7 +100,7 @@ function createTriangleIcon(bearing=0, size=36, fillColor='#1978c8', lineText=''
     });
 }
 
-function createCircleIcon(bearing, size=36, fillColor='#1978c8', lineText='') {
+function createCircleIcon(bearing, size=28, fillColor='#1978c8', lineText='') {
     const html = createCircleHtml(bearing, size, fillColor, lineText);
     return L.divIcon({
         html,
