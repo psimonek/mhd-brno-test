@@ -11,6 +11,9 @@ let _overlayCheckStarted = false;
 let _wsOverlayHidden = false;
 const _wsOverlayId = 'ws-loading-overlay-duckai';
 
+const targetZoom = 17;
+const groupDelay = L.layerGroup()
+
 
 // Načte stops.csv a uloží mapu s klíči normalizovanými tak, že z hodnot
 // jako "U1234Z1" získá "1234".
@@ -179,19 +182,19 @@ function processRecord(record) {
     const finalStopName = stopsMap.get(lookupKey) || rawFinalStop || '';
 
     const popup = `Linka: ${record.LineName || lineId || ''}, kurz: ${record.Course}<br>Do: ${finalStopName} <br>Zpoždění: ${record.Delay} min.`;
-    const tooltipDelay = `${record.Delay} min.`;
+    //const tooltipDelay = `${record.Delay} min.`; --- příliš náročné na vykreslení na mobilu.
 
     if (vehicles.has(id)) {
         const marker = vehicles.get(id);
         marker.setLatLng([lat, lng]);
         updateMarkerIcon(marker, bearing, lineId, lineName, isInactive, vtype);
-        marker.setTooltipContent(tooltipDelay); // aktualizuje existující tooltip
+        //marker.setTooltipContent(tooltipDelay); // aktualizuje existující tooltip --- příliš náročné na vykreslení na mobilu.
         if (marker.getPopup()) marker.setPopupContent(popup);
     } else {
         if (!isInactive) {
             const icon = createTriangleIcon(bearing, 38, colorForLine(lineId, vtype), lineName !== undefined ? String(lineName) : '');
             const marker = L.marker([lat, lng], {icon});
-            marker.bindTooltip(tooltipDelay, { permanent: true, direction: 'top' });
+            //marker.bindTooltip(tooltipDelay, { permanent: true, direction: 'top' }); --- příliš náročné na vykreslení na mobilu.
             marker.bindPopup(popup);
             marker.addTo(map);
 
