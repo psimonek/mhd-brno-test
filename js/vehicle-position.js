@@ -37,7 +37,7 @@ async function loadStopsCsv(url = 'stops.csv') {
 function colorForLine(lineId, vtype) {
     const id = Number(lineId) || 0;
     const vt = Number(vtype);
-    if (vt == 5) return '#c66b4b';
+    if (vt === 5) return '#c66b4b';
     if (id >= 1 && id <= 20) return '#d32d2a';       // červená
     if (id >= 21 && id <= 39) return '#4ca14c';      // zelená
     if (id >= 40 && id <= 88) return '#247ac8';      // modrá
