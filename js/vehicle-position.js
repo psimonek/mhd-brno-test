@@ -34,7 +34,7 @@ async function loadStopsCsv(url = 'stops.csv') {
 }
 
 // Barva podle LineID
-function colorForLine(lineId, vtype, isInactive) {
+function colorForLine(lineId, vtype) {
     const id = Number(lineId) || 0;
     const vt = Number(vtype);
     if (vt == 5) return '#c66b4b';
@@ -113,7 +113,7 @@ function createCircleIcon(bearing, size=36, fillColor='#1978c8', lineText='') {
 
 // aktualizace ikony u existujícího markeru (přehození na novou divIcon)
 function updateMarkerIcon(marker, bearing, lineId, lineName, isInactive, vtype, size=36) {
-    const color = colorForLine(lineId, vtype, isInactive);
+    const color = colorForLine(lineId, vtype);
     const txt = (lineName !== undefined && lineName !== null) ? String(lineName) : '';
 
     if (!isInactive) {
@@ -178,14 +178,23 @@ function processRecord(record) {
         if (marker.getPopup()) marker.setPopupContent(popup);
     } else {
         if (!isInactive) {
-            const icon = createTriangleIcon(bearing, 36, colorForLine(lineId, vtype, isInactive), lineName !== undefined ? String(lineName) : '');
-        } else {
-            const icon = createCircleIcon(bearing, 36, colorForLine(lineId, vtype, isInactive), lineName !== undefined ? String(lineName) : '');
+            const iconTri = createTriangleIcon(bearing, 36, colorForLine(lineId, vtype), lineName !== undefined ? String(lineName) : '');
+
+            const marker = L.marker([lat, lng], {iconTri});
+            marker.bindPopup(popup);
+            marker.addTo(map);
+            vehicles.set(id, marker); } else {
+            const iconCir = createCircleIcon(bearing, 36, colorForLine(lineId, vtype), lineName !== undefined ? String(lineName) : '');
+
+            const marker = L.marker([lat, lng], {iconCir});
+            marker.bindPopup(popup);
+            marker.addTo(map);
+            vehicles.set(id, marker);
         }
-        const marker = L.marker([lat, lng], {icon});
-        marker.bindPopup(popup);
-        marker.addTo(map);
-        vehicles.set(id, marker);
+        //const marker = L.marker([lat, lng], {icon});
+        //marker.bindPopup(popup);
+        //marker.addTo(map);
+        //vehicles.set(id, marker);
     }
 }
 
