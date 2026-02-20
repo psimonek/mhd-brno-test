@@ -116,11 +116,11 @@ function createCircleIcon(bearing, size=36, fillColor='#1978c8', lineText='') {
 function updateMarkerIcon(marker, bearing, lineId, lineName, isInactive, vtype, size=36) {
     const color = colorForLine(lineId, vtype, isInactive);
     const txt = (lineName !== undefined && lineName !== null) ? String(lineName) : '';
-    if (!isInactive) {
+   // if (!isInactive) {
         const newIcon = createTriangleIcon(bearing, size, color, txt);
-    } else {
-        const newIcon = createCircleIcon(bearing, size, color, txt);
-    }
+   // } else {
+   //     const newIcon = createCircleIcon(bearing, size, color, txt);
+    //}
     marker.setIcon(newIcon);
 }
 
