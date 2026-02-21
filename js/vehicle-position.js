@@ -178,7 +178,7 @@ function processRecord(record) {
     const lineId = record.LineID;
     const lineName = record.LineName;
 
-    if (filterButtonState && filterLineNumber !== lineName) return;
+    if (filterButtonState && filterLineNumber !== lineName) return; // Pokud filtrujeme zobrazení linky a linka není aktuální záznam, ukončíme funkci
 
     const vtype = record.VType;
 
@@ -219,7 +219,7 @@ function processRecord(record) {
 // --- Filter a WS ---
 function sendFilter(wsInstance, lineFilter = null) {
     if (!wsInstance || wsInstance.readyState !== WebSocket.OPEN) return;
-    const where = lineFilter ? `LineID = ${Number(lineFilter)}` : "1=1";
+    const where = lineFilter ? `LineName = ${Number(lineFilter)}` : "1=1";
     const filter = {
         filter: {
             where: where,
@@ -233,7 +233,7 @@ function startWebsocket(lineFilter = null) {
     if (ws) return;
     _showWsOverlay(); // zobrazíme hlášku o čekání na data
     ws = new WebSocket(STREAM_URL);
-    ws.addEventListener('open', () => { sendFilter(ws, lineFilter); });
+    ws.addEventListener('open', () => { sendFilter(ws, 1); });
     ws.addEventListener('message', ev => {
         if (typeof ev.data === 'string') handleMessage(ev.data);
         else {
