@@ -185,7 +185,7 @@ function processRecord(record) {
         //if (m) {
         //    try { map.removeLayer(m); } catch(e) {}
         //    vehicles.delete(id);
-        }
+        //}
         return;
     } // Pokud filtrujeme zobrazení linky a linka není aktuální záznam, ukončíme funkci
 
