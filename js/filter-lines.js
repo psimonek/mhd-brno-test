@@ -23,23 +23,28 @@ const filterLinesButton = L.Control.extend({
                 bttnfilter.style.backgroundColor = 'orange';
                 filterButtonState = true;
 
+                // při filtrování odstraníme všechny linky, které momentálně nefiltrujeme
                 for (const [id, marker] of vehicles.entries()) {
                     const ln = marker._lineName || marker.options.lineName; // fallback
-                    // pokud nemáme lineName uložené v markeru, zkuste ho získat z popup/tooltip nebo jiné vlastnosti
                     if (String(ln) !== String(filterLineNumber)) {
                         try { map.removeLayer(marker); } catch(e) {}
-                        vehicles.delete(id);
+                        //vehicles.delete(id);
                     }
                 }
-
-
-
 
             } else {
                 showLayerByName(linkaCislo);
                 bttnfilter.style.backgroundColor = 'white';
                 filterLineNumber = 0;
                 filterButtonState = false;
+
+                for (const [id, marker] of vehicles.entries()) {
+                    const ln = marker._lineName || marker.options.lineName; // fallback
+                    if (String(ln) !== String(filterLineNumber)) {
+                        try { map.addLayer(marker);; } catch(e) {}
+                        //vehicles.delete(id);
+                    }
+                }
             }
         });
 
