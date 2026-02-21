@@ -20,7 +20,7 @@ function loadLinesAndStops(lineRef) {
     resetDiv.innerHTML = textToAddReset;
 
 	if (lineRef === "Rež") {
-		console.log(xmlData);
+		//console.log(xmlData);
 		// Pomocná funkce pro získání hodnoty tagu
 		function getTagValue(tags, key) {
 		    for (let tag of tags) {
@@ -184,7 +184,7 @@ function loadLinesAndStops(lineRef) {
 									
 						// Předpokládáme, že jmenohladiny je vrstva s různými typy
 						dataVrstvy.eachLayer(function(layer) {
-							console.log(layer);
+							//console.log(layer);
 	
 						    // Získání typu vrstvy z options
 						    var layerType = layer.options.layerType; // Předpokládáme, že layerType je v options
@@ -217,7 +217,7 @@ function loadLinesAndStops(lineRef) {
 				                				            
 					            // Kontrola zoomu
 					            map.on('zoomend', function() {
-					            	console.log(getStopsCheckboxValue());
+					            	//console.log(getStopsCheckboxValue());
 					                if (map.getZoom() > 15 && map.hasLayer(osm) && getStopsCheckboxValue()) {
 					                    tooltips.addTo(map);
 					                } else {
@@ -530,7 +530,7 @@ function loadLinesAndStops(lineRef) {
 					                				            
 						            // Kontrola zoomu
 						            map.on('zoomend', function() {
-						            	console.log(getStopsCheckboxValue());
+						            	//console.log(getStopsCheckboxValue());
 						                if (map.getZoom() > 15 && map.hasLayer(osm) && getStopsCheckboxValue()) {
 						                    tooltips.addTo(map);
 						                } else {
