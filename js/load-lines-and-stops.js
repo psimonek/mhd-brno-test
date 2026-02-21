@@ -448,6 +448,21 @@ function loadLinesAndStops(lineRef) {
 		                            L.polyline(latlngs, { color: lineColor, weight: 6 })
 		                            .bindPopup(relation.tags.name || "Neznámá linka")
 		                            .addTo(hladina);
+
+
+
+
+                                hideButtonState = false;
+                                const el = document.getElementById('hidebutton-id');
+                                if (el) el.style.backgroundColor = 'white';
+
+
+
+
+
+
+
+
 		                        //}
 		
 		                    } else if (member.type === 'node') {
