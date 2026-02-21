@@ -17,29 +17,22 @@ const clearScreenButton = L.Control.extend({
         L.DomEvent.disableClickPropagation(container);
         L.DomEvent.disableScrollPropagation(container);
 
-        if (hideButtonState) {
-            L.DomEvent.on(btn, 'click', (e) => {
-                L.DomEvent.stopPropagation(e);
-                L.DomEvent.preventDefault(e);
-                // Vaše funkce zde
+
+        L.DomEvent.on(btn, 'click', (e) => {
+            L.DomEvent.stopPropagation(e);
+            L.DomEvent.preventDefault(e);
+            // Vaše funkce zde
+            if (!hideButtonState) {
                 hideLayerByName(linkaCislo);
-                //alert('Tlačítko stisknuto!');
-                // nebo jiná logika, např. map.setView(...) apod.
-            });
-            btn.style.backgroundColor = 'orange';
-            hideButtonState = true;
-        } else {
-            L.DomEvent.on(btn, 'click', (e) => {
-                L.DomEvent.stopPropagation(e);
-                L.DomEvent.preventDefault(e);
-                // Vaše funkce zde
+                btn.style.backgroundColor = 'orange';
+                hideButtonState = true;
+            } else {
                 showLayerByName(linkaCislo);
-                //alert('Tlačítko stisknuto!');
-                // nebo jiná logika, např. map.setView(...) apod.
-            });
-            btn.style.backgroundColor = 'white';
-            hideButtonState = false;
-        }
+                btn.style.backgroundColor = 'white';
+                hideButtonState = false;
+            }
+        });
+
         return container;
     }
 });
