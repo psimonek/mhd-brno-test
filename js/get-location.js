@@ -66,7 +66,7 @@ function showPosition(e) {
     var lon = e.longitude;
 
     // Získání směru pohybu
-    var heading = e.heading !== null ? e.heading : 0;
+    heading = e.heading !== null ? e.heading : 0;
     var accuracy = e.accuracy !== null ? e.accuracy : 0;
     var speed = e.speed !== null ? e.speed : 0;
     var zoomlevel = map.getZoom();
