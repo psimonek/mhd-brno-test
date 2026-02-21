@@ -449,19 +449,10 @@ function loadLinesAndStops(lineRef) {
 		                            .bindPopup(relation.tags.name || "Neznámá linka")
 		                            .addTo(hladina);
 
-
-
-
+                                // Při přepnutí na zobrazení linky změnit tlačítko skrytí linky
                                 hideButtonState = false;
                                 const el = document.getElementById('hidebutton-id');
                                 if (el) el.style.backgroundColor = 'white';
-
-
-
-
-
-
-
 
 		                        //}
 		
@@ -494,7 +485,13 @@ function loadLinesAndStops(lineRef) {
 						        // Vyvolej funkci addStoptoDiv s cisloRelace
 						        addStoptoDiv(cisloRel);
 						        setTheme(); // Potřebujeme kvůli zachování barev variant linek při jejich vyvolání a skrytí zkontrolovat režim tmavý/světlý 
-						    });
+
+                                // Při přepnutí na zobrazení linky změnit tlačítko skrytí linky
+                                hideButtonState = false;
+                                const el = document.getElementById('hidebutton-id');
+                                if (el) el.style.backgroundColor = 'white';
+
+                            });
 						});
 		
 						var $cols = $('.detail-linky').click(function(e) {
