@@ -3,5 +3,6 @@ document.querySelectorAll('.group-content a').forEach(function(link) {
         event.preventDefault(); // Zabráníme výchozímu chování odkazu
         linkaCislo = this.getAttribute('data-line'); // Získáme číslo linky
         loadLinesAndStops(linkaCislo); // Vyvoláme funkci s číslem linky
+        console.log(linkaCislo);
     	});
 });
