@@ -177,6 +177,9 @@ function processRecord(record) {
 
     const lineId = record.LineID;
     const lineName = record.LineName;
+
+    if (filterButtonState && filterLineNumber !== lineName) return;
+
     const vtype = record.VType;
 
     const rawFinalStop = record.FinalStopID != null ? String(record.FinalStopID).trim() : '';

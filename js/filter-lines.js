@@ -1,7 +1,3 @@
-let filterButtonState = false;
-
-// Předpoklad: máte proměnnou map = L.map(...);
-
 // Vytvoření vlastního tlačítka
 const filterLinesButton = L.Control.extend({
     options: { position: 'topleft' }, // levý horní roh
@@ -23,12 +19,14 @@ const filterLinesButton = L.Control.extend({
             L.DomEvent.preventDefault(e);
             // Vaše funkce zde
             if (!filterButtonState) {
-                hideLayerByName(linkaCislo);
+                filterLineNumber = linkaCislo;
                 bttnfilter.style.backgroundColor = 'orange';
+                filterLineNumber = linkaCislo;
                 filterButtonState = true;
             } else {
                 showLayerByName(linkaCislo);
                 bttnfilter.style.backgroundColor = 'white';
+                filterLineNumber = 0;
                 filterButtonState = false;
             }
         });
