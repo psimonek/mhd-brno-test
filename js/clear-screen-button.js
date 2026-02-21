@@ -18,7 +18,7 @@ const clearScreenButton = L.Control.extend({
             L.DomEvent.stopPropagation(e);
             L.DomEvent.preventDefault(e);
             // Vaše funkce zde
-            console.log(linkaCislo);
+            hideLayerByName(linkaCislo);
             //alert('Tlačítko stisknuto!');
             // nebo jiná logika, např. map.setView(...) apod.
         });
