@@ -1,3 +1,5 @@
+let hideButtonState = false;
+
 // Předpoklad: máte proměnnou map = L.map(...);
 
 // Vytvoření vlastního tlačítka
@@ -6,6 +8,7 @@ const clearScreenButton = L.Control.extend({
     onAdd: function(map) {
         const container = L.DomUtil.create('div', 'leaflet-bar my-custom-control');
         const btn = L.DomUtil.create('a', '', container);
+        btn.id = 'hidebutton-id';
         btn.href = '#';
         btn.title = 'Moje funkce';
         btn.innerHTML = '<img src="img/hide-icon.png" height="18px" width="18px" style="padding-top:6px">'; // ikona/text tlačítka
@@ -14,15 +17,29 @@ const clearScreenButton = L.Control.extend({
         L.DomEvent.disableClickPropagation(container);
         L.DomEvent.disableScrollPropagation(container);
 
-        L.DomEvent.on(btn, 'click', (e) => {
-            L.DomEvent.stopPropagation(e);
-            L.DomEvent.preventDefault(e);
-            // Vaše funkce zde
-            hideLayerByName(linkaCislo);
-            //alert('Tlačítko stisknuto!');
-            // nebo jiná logika, např. map.setView(...) apod.
-        });
-
+        if (hideButtonState) {
+            L.DomEvent.on(btn, 'click', (e) => {
+                L.DomEvent.stopPropagation(e);
+                L.DomEvent.preventDefault(e);
+                // Vaše funkce zde
+                hideLayerByName(linkaCislo);
+                //alert('Tlačítko stisknuto!');
+                // nebo jiná logika, např. map.setView(...) apod.
+            });
+            btn.style.backgroundColor = 'orange';
+            hideButtonState = true;
+        } else {
+            L.DomEvent.on(btn, 'click', (e) => {
+                L.DomEvent.stopPropagation(e);
+                L.DomEvent.preventDefault(e);
+                // Vaše funkce zde
+                showLayerByName(linkaCislo);
+                //alert('Tlačítko stisknuto!');
+                // nebo jiná logika, např. map.setView(...) apod.
+            });
+            btn.style.backgroundColor = 'white';
+            hideButtonState = false;
+        }
         return container;
     }
 });
