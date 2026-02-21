@@ -21,13 +21,12 @@ const filterLinesButton = L.Control.extend({
             if (!filterButtonState) {
                 filterLineNumber = linkaCislo;
                 bttnfilter.style.backgroundColor = 'orange';
-                filterLineNumber = linkaCislo;
                 filterButtonState = true;
 
                 for (const [id, marker] of vehicles.entries()) {
                     const ln = marker._lineName || marker.options.lineName; // fallback
                     // pokud nemáme lineName uložené v markeru, zkuste ho získat z popup/tooltip nebo jiné vlastnosti
-                    if (String(ln) !== String(lineFilter)) {
+                    if (String(ln) !== String(filterLineNumber)) {
                         try { map.removeLayer(marker); } catch(e) {}
                         vehicles.delete(id);
                     }
