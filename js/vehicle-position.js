@@ -181,10 +181,10 @@ function processRecord(record) {
     const lineName = record.LineName;
 
     if (filterButtonState && filterLineNumber !== lineName) {
-        const m = vehicles.get(id);
-        if (m) {
-            try { map.removeLayer(m); } catch(e) {}
-            vehicles.delete(id);
+        //const m = vehicles.get(id);
+        //if (m) {
+        //    try { map.removeLayer(m); } catch(e) {}
+        //    vehicles.delete(id);
         }
         return;
     } // Pokud filtrujeme zobrazení linky a linka není aktuální záznam, ukončíme funkci
