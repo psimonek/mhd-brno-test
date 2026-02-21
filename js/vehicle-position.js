@@ -128,9 +128,11 @@ function updateMarkerIcon(marker, bearing, lineId, lineName, isInactive, vtype, 
     if (!isInactive) {
         const newIcon = createTriangleIcon(bearing, 38, color, txt);
         marker.setIcon(newIcon);
+        marker._lineName = lineName;
     } else {
         const newIconCircle = createCircleIcon(bearing, 30, color, txt);
         marker.setIcon(newIconCircle);
+        marker._lineName = lineName;
     }
     //marker.setIcon(newIcon);
 }
