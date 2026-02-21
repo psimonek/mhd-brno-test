@@ -172,7 +172,7 @@ function processRecord(record) {
     _hideOverlayAfterMarkersRendered(); // spustí se pouze jednou díky _overlayCheckStarted
 
     const bearingRecord = Number(record.Bearing || 0);
-    bearing = bearingRecord - heading; // Výpočet natočení šipky vozidla MHD vůči rotaci mapy, např. při navigaci
+    bearing = bearingRecord - endBearing; // Výpočet natočení šipky vozidla MHD vůči rotaci mapy, např. při navigaci
     if (bearing < 0) bearing += 360; // Pokud vyjde záporná hodnota, přepočíst do systému 0-360.
 
     const lineId = record.LineID;
