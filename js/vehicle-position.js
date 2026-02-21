@@ -13,6 +13,7 @@ const _wsOverlayId = 'ws-loading-overlay-duckai';
 
 const targetZoom = 17;
 const groupDelay = L.layerGroup()
+let bearing = 0;
 
 
 // Načte stops.csv a uloží mapu s klíči normalizovanými tak, že z hodnot
@@ -170,7 +171,10 @@ function processRecord(record) {
 
     _hideOverlayAfterMarkersRendered(); // spustí se pouze jednou díky _overlayCheckStarted
 
-    const bearing = Number(record.Bearing || 0);
+    const bearingRecord = Number(record.Bearing || 0);
+    bearing = bearingRecord - heading; // Výpočet natočení šipky vozidla MHD vůči rotaci mapy, např. při navigaci
+    if (bearing < 0) bearing += 360; // Pokud vyjde záporná hodnota, přepočíst do systému 0-360.
+
     const lineId = record.LineID;
     const lineName = record.LineName;
     const vtype = record.VType;

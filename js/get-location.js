@@ -52,6 +52,7 @@ function getLocation() {
             tracking = false; // Nastavení stavu sledování na false
             map.setBearing(0);
             releaseWakeLock();
+            heading = 0;
         }
     } else {
         alert("Geolokace není podporována tímto prohlížečem.");
@@ -158,6 +159,7 @@ function showPosition(e) {
             arrowElement.style.transform = 'rotate(' + heading + 'deg)';
         }
         cumulativeDeltaHeading = 0; // reset kumulativní změny - kvůli možné změně pohledu a nakumulování úhlu
+        heading = 0;
     }
 }
 
